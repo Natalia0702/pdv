@@ -1,34 +1,47 @@
 <template>
   <div class="hello">
-    <h1>{{ msg }}</h1>
-    <p>
-      Selecione as telas com os links a baixo      
-    </p>
-    <h3>Telas</h3>
-    <ul>
-      <li><ProdutosVue /></li>      
-    </ul>
-    <ListarProdutosVue />
+    <h2>Bem Vindo ao PDV</h2>
+    <div>
+      <ul class="nav nav-tabs" id="myTab" role="tablist">
+        <li class="nav-item" role="presentation">
+          <button class="nav-link" :class="{ 'active': activeTab === 'inserir' }" @click="activeTab = 'inserir'" aria-controls="home-tab-pane">Inserir Produtos</button>
+        </li>
+        <li class="nav-item" role="presentation">
+          <button class="nav-link" :class="{ 'active': activeTab === 'lista' }" @click="activeTab = 'lista'" aria-controls="profile-tab-pane">Lista de Produtos</button>
+        </li>
+        <li class="nav-item" role="presentation">
+          <button class="nav-link" :class="{ 'active': activeTab === 'venda' }" @click="activeTab = 'venda'" aria-controls="profile-tab-pane">Venda de Produtos</button>
+        </li>
+        </ul>
+        <div class="tab-content" id="myTabContent">
+          <div v-if="activeTab === 'inserir'" class="tab-pane fade show active" id="home-tab-pane" role="tabpanel" tabindex="0"><ProdutosVue /></div>
+          <div v-if="activeTab === 'lista'" class="tab-pane fade show active" id="profile-tab-pane" role="tabpanel" tabindex="0"><ListarProdutosVue /></div>
+          <div v-if="activeTab === 'venda'" class="tab-pane fade show active" id="profile-tab-pane" role="tabpanel" tabindex="0"><VendasVue/></div>
+        </div>
+    </div>
   </div>
 </template>
 
 <script>
 import ListarProdutosVue from './ListaProdutos.vue';
 import ProdutosVue from './Produtos.vue';
+import VendasVue from './Vendas.vue';
 
 export default {
   name: 'DashBoard',
   components: {
     ListarProdutosVue,
-    ProdutosVue
+    ProdutosVue,
+    VendasVue
   },
-  props: {
-    msg: String
+  data() {
+    return {
+      activeTab: 'inserir'
+    };
   }
 }
 </script>
 
-<!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
 h3 {
   margin: 40px 0 0;

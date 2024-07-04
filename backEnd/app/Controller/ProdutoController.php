@@ -32,4 +32,9 @@ class ProdutoController
         $resultado = $this->produtoModel->deletarProduto($id);
         return $resultado;
     }
+
+    public function listarProdutosTipoProduto(){
+        $resultado = $this->produtoModel->listarProdutosTipoProduto();
+        return $resultado;
+    }
 }

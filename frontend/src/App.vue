@@ -1,6 +1,6 @@
 <template>
   <img alt="logo" src="./assets/calculadoraIcon.png" class="small-image">
-  <Dashboard msg="Bem vindo ao PDV"/>
+  <Dashboard />
 </template>
 
 <script>

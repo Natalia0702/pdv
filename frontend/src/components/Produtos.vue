@@ -1,12 +1,42 @@
 <template>
-    <div>
-        <h2>Inserir Produtos </h2>
-        <input type="text" v-model="nome" placeholder="Nome do Produto">        
-        <input type="text" v-model="preco_custo" placeholder="Preco Custo">        
-        <input type="text" v-model="preco_venda" placeholder="Preco Venda">
-        <input type="text" v-model="tipo_produto_id" placeholder="Tipo Produto">
-        <button @click="sendData">Enviar dados</button>
+  <div class="container mt-4">
+    <div class="row mb-3">
+      <div class="col">
+        <input type="text" class="form-control" v-model="nome" placeholder="Nome do Produto">
+      </div>
     </div>
+    
+    <div class="row mb-3">
+      <div class="col">
+        <input type="text" class="form-control" v-model="preco_custo" placeholder="Preço de Custo">
+      </div>
+      <div class="col">
+        <input type="text" class="form-control" v-model="preco_venda" placeholder="Preço de Venda">
+      </div>
+    </div>
+    <div class="container">
+      <div class="row justify-content-center">
+        <div class="col-md-6 mb-3">
+          <div class="form-group centered-form-group">
+            <label for="selectCidade" class="mr-2">Selecione o Tipo do Produto:</label>
+            <select class="form-control" id="selectCidade">
+              <option value="1">Fruta</option>
+              <option value="2">Legumes</option>
+              <option value="3">Verdura</option>
+              <option value="4">Carne</option>
+              <option value="5">Laticínios</option>
+              <option value="6">Bebidas</option> 
+            </select>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col">
+        <button class="btn btn-primary" @click="sendData">Adicionar</button>
+      </div>
+    </div>
+  </div>
 </template>
 
 <script>

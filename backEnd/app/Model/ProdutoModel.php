@@ -72,4 +72,10 @@ class ProdutoModel
             return false;
         }
     }
+
+    public function listarProdutosTipoProduto()
+    {
+        $stmt = $this->pdo->query("SELECT p.*, tp.*, tp.nome as nomeTipoProduto, p.nome as nomeProduto FROM produtos p JOIN tipos_produtos tp ON p.tipo_produto_id = tp.id");
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
 }

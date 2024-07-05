@@ -112,14 +112,12 @@ export default {
             this.salvoComSucesso = true;
           }
           produto.editando = false;
-          console.log(response.data);
         } catch (error) {
           console.error(error);
         }
       },
       deletarProduto(id) {
         axios.delete(`http://localhost:8080/deletarProduto/${id}`).then( () => {
-            console.log('excluido com sucesso');
             this.deletadoComSucesso = true;
             this.carregarProdutos();
         }).catch(error => {
@@ -129,7 +127,6 @@ export default {
       },
       carregarProdutos(){
         axios.get('http://localhost:8080/listarProdutos').then(response => {
-            console.log(response);
             this.produtos = response.data;
             this.produtos.editando = false;
         }).catch(error => {

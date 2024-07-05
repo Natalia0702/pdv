@@ -52,7 +52,7 @@ export default {
   methods: {
     async sendData() {
       try {
-          const response = await axios({  
+        await axios({  
           method: 'post',
           url: 'http://localhost:8080/salvarProduto',
           data: {     
@@ -65,7 +65,6 @@ export default {
             'Content-Type': 'application/json'
           }          
         });
-        console.log(response.data);
       } catch (error) {
         console.error(error);
       }

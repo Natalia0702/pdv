@@ -85,4 +85,34 @@ class ProdutoModel
         $stmt = $this->pdo->query("SELECT * FROM TIPOS_PRODUTOS");
         return $stmt->fetchAll(PDO::FETCH_ASSOC);            
     }
+    public function salvarVenda($data){
+        try {
+            $this->pdo->beginTransaction();
+
+            $stmtVenda = $this->pdo->prepare('INSERT INTO vendas (data_venda, total_compra, total_imposto) VALUES (NOW(), :total, :totalImpostos)');
+            $stmtVenda->bindParam(':total', $data->totalValorVenda, PDO::PARAM_INT);
+            $stmtVenda->bindParam(':totalImpostos', $data->totalVendaImposto, PDO::PARAM_INT);
+            $stmtVenda->execute();
+
+            // Obter o ID da venda inserida
+            $vendaId = $this->pdo->lastInsertId();
+            $stmtItemVenda = $this->pdo->prepare('INSERT INTO itens_venda (id_venda, produto, quantidade, valor_total) VALUES (:id_venda, :nomeproduto, :quantidade, :total)');
+            
+            foreach ($data->vendas as $item) {
+                $stmtItemVenda->bindParam(':id_venda', $vendaId, PDO::PARAM_INT);
+                $stmtItemVenda->bindParam(':nomeproduto', $item->produto->nomeproduto, PDO::PARAM_STR);
+                $stmtItemVenda->bindParam(':quantidade', $item->quantidade, PDO::PARAM_INT);
+                $stmtItemVenda->bindParam(':total', $item->total, PDO::PARAM_STR);
+                $stmtItemVenda->execute();
+            }
+            
+            $this->pdo->commit();
+            return true;
+
+        } catch (PDOException $e) {
+            $this->pdo->rollBack();
+            echo "Erro ao salvar venda: " . $e->getMessage();
+            return false;
+        }
+    }
 }

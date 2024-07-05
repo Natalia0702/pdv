@@ -1,6 +1,9 @@
 <template>
     <div>
-        <div class="container">
+        <div class="container mt-4">
+            <div v-if="salvoComSucesso" class="alert alert-success" role="alert">
+                Venda salva com sucesso!
+            </div>
             <div class="row">
                 <div>
                     <div class="form-group centered-form-group">
@@ -17,21 +20,19 @@
                 </div>
                 <div class="col-md-2 mb-3">
                     <label for="readonlyValor">Valor Item:</label>
-                    <!-- <input type="text" class="form-control" id="readonlyValor" placeholder="5" readonly>-->
-                    <!-- <label type="text" class="form-control" id="readonlyValor" readonly>{{ Number(produtoSelecionado.preco_venda) * Number(quantidadeInformada) }} </label> -->
                     <input type="hidden" v-if="total !== 0" v-model="total" />
                     <label type="text" class="form-control" id="readonlyValor" readonly>{{ valorItem }} </label>
                 </div> 
                 <div class="col-md-2 mb-3">
                     <label for="readonlyValor">Imposto:</label>
-                    <!-- <input type="text" class="form-control" id="readonlyValor" placeholder="5" readonly>-->
                     <label type="text" class="form-control" id="readonlyValor" readonly>{{ produtoSelecionado.percentual_imposto }} </label>
                 </div> 
                 <div class="col-md-2 mb-3">
                     <label for="readonlyValor">Total:</label>
-                    <!-- <input type="text" class="form-control" id="readonlyValor" placeholder="5" readonly>-->
                     <label type="text" class="form-control" id="readonlyValor" readonly>{{ total }} </label>
-                    <button v-if="total" @click="adicionarVenda()">Adicionar</button>
+                </div>
+                <div class="col-md-1 mb-2" >  
+                    <button type="button" style="margin-top:32px" class="btn btn-primary" v-if="total" @click="adicionarVenda()">Adicionar</button>
                 </div> 
             </div>
         </div>
@@ -62,11 +63,11 @@
                         <label></label>
                     </div> 
                     <div class="col-md-4 mb-4">
-                        <label for="readonlyValor" style="font-weight:bold">Valor Imposto Total:</label>
+                        <label for="readonlyValor" style="font-weight:bold">Total Valor Imposto:</label>
                         <label type="text" class="form-control" id="readonlyValor" readonly>{{ totalImpostos }} </label>
                     </div>
                     <div class="col-md-4 mb-4">
-                        <label for="readonlyValor" style="font-weight:bold">Valor Total Venda:</label>
+                        <label for="readonlyValor" style="font-weight:bold">Total Valor Compra:</label>
                         <label type="text" class="form-control" id="readonlyValor" readonly>{{ totalVendas }} </label>
                     </div> 
 
@@ -74,8 +75,8 @@
             </div>
         
             <div class="buttons-container" v-if="vendas.length !== 0">
-                <button class="button" @click="cancelarVenda">Cancelar Venda</button>
-                <button class="button" @click="finalizarVenda">Finalizar Venda</button>
+                <button class="button" @click="cancelarVenda()">Cancelar Venda</button>
+                <button class="button" @click="salvarVenda()">Finalizar Venda</button>
             </div>
         </div>
     </div>
@@ -95,16 +96,12 @@ export default {
             total: 0,
             vendas: [],
             totalVendas: 0,
-            totalImpostos: 0
+            totalImpostos: 0,
+            salvoComSucesso: false,
         }        
     },
     mounted() {
-        axios.get('http://localhost:8080/listarProdutosTipoProduto').then(response => {
-            console.log(response);
-            this.produtos = response.data;
-        }).catch(error => {
-            console.log("Erro ao carregar dados do produto" + error);
-        })
+        this.listarProduto()
     },
     watch: {
         produtoSelecionado: {
@@ -116,16 +113,20 @@ export default {
         quantidadeInformada: function() {
             this.calcularTotal();
         },
-        vendas: function() {
-            console.log('zkldfkljskdj');
+        salvoComSucesso: function(){
+        if(this.salvoComSucesso){
+          setTimeout(() => {
+            this.salvoComSucesso = false;
+          }, 3000);
         }
+      },
     },
     methods: {
         calcularTotal() {
             const valorItem = Number(this.produtoSelecionado.preco_venda) * Number(this.quantidadeInformada);
             const imposto = (valorItem * this.produtoSelecionado.percentual_imposto) / 100;
             const totalComImposto = valorItem + (imposto * this.quantidadeInformada);
-
+            
             this.total = totalComImposto;
             this.valorItem = valorItem;
             this.valorImposto = imposto;
@@ -134,15 +135,50 @@ export default {
             this.vendas.push({
                 produto: this.produtoSelecionado,
                 quantidade: this.quantidadeInformada,
-                total: this.total
+                total: this.total,
+                total_imposto_item: this.totalImpostos
             });
-
-
-
             this.totalVendas = this.vendas.reduce((acc, venda) => acc + venda.total, 0);
-            console.log(this.vendas);
             this.totalImpostos = this.vendas.reduce((acc, venda) => acc + ((Number(venda.produto.percentual_imposto) * Number(venda.quantidade) * Number(venda.produto.preco_venda))/100), 0);
-            // this.totalImpostos = this.vendas.reduce((acc, venda) => acc + (venda.total + Number(venda.produto.preco_venda) * Number(venda.quantidade)), 0);
+        },
+        listarProduto(){
+            axios.get('http://localhost:8080/listarProdutosTipoProduto').then(response => {
+                this.produtos = response.data;
+            }).catch(error => {
+                console.log("Erro ao carregar dados do produto" + error);
+            })
+        },
+        cancelarVenda() {
+            this.vendas = [];
+            this.totalVendas = 0;
+            this.totalImpostos = 0; 
+            this.produtoSelecionado = ''; 
+            this.quantidadeInformada = 0; 
+            this.valorItem = ''; 
+            this.total = 0; 
+
+            this.listarProduto();
+        },
+        async salvarVenda(){
+            try {
+                const response = await axios({  
+                method: 'post',
+                url: 'http://localhost:8080/salvarVenda',
+                data: {     
+                    vendas: this.vendas,
+                    totalVendaImposto: this.totalImpostos,
+                    totalValorVenda: this.totalVendas
+                },
+                headers: {
+                    'Content-Type': 'application/json'
+                }          
+                });
+                console.log(response.data);
+                this.salvoComSucesso = true;
+            } catch (error) {
+                console.error(error);
+            }
+            // this.salvoComSucesso = false;
         }
         
     }

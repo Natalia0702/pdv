@@ -41,4 +41,9 @@ class ProdutoController
         $resultado = $this->produtoModel->listarTiposDeProdutos();
         return $resultado;        
     }
+
+    public function salvarVenda($data) {
+        $resultado = $this->produtoModel->salvarVenda($data);
+        return $resultado;        
+    }
 }

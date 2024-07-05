@@ -69,4 +69,12 @@ if($path == '/listarTiposDeProdutos') {
     $resultado = $produtoController->listarTiposDeProdutos();
     echo json_encode($resultado);
 }
-
+if($path === '/salvarVenda') {
+    $produtoController = new ProdutoController($pdo);
+    header('Content-Type: application/json');
+    $postData = file_get_contents("php://input");
+    $data = json_decode($postData);
+    
+    $produtoController->salvarVenda($data);
+    echo 'Venda salva com sucesso!';
+}

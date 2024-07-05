@@ -15,9 +15,9 @@ class ProdutoController
         return $produtos;
     }
 
-    public function atualizarProduto($id, $nome, $preco_custo, $preco_venda)
+    public function atualizarProduto($id, $nome, $preco_custo, $preco_venda, $tipo_produto_id)
     {   
-        $resultado = $this->produtoModel->atualizarProduto($id, $nome , $preco_custo, $preco_venda);
+        $resultado = $this->produtoModel->atualizarProduto($id, $nome , $preco_custo, $preco_venda, $tipo_produto_id);
         return $resultado;
     }
 

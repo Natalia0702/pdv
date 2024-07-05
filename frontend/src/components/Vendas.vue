@@ -33,18 +33,15 @@
                     <label type="text" class="form-control" id="readonlyValor" readonly>{{ total }} </label>
                     <button v-if="total" @click="adicionarVenda()">Adicionar</button>
                 </div> 
-                
-                {{ produtoSelecionado }}  
-                {{ quantidadeInformada }}                          
             </div>
         </div>
         <div>
-            <table>
+            <table class="table">
                 <thead>
                     <tr>
-                        <th>Produto</th>
-                        <th>Quantidade</th>
-                        <th>Valor Total com Imposto</th>
+                        <th scope="col">Produto</th>
+                        <th scope="col">Quantidade</th>
+                        <th scope="col">Valor Total com Imposto</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -55,6 +52,31 @@
                     </tr>
                 </tbody>
             </table>
+        </div>
+        
+        <div v-if="vendas.length !== 0">
+            <div v-if="vendas.length !== 0">
+                <div class="row mb-3">
+                    <div class="col-md-4 mb-4">
+                        <label></label>
+                        <label></label>
+                    </div> 
+                    <div class="col-md-4 mb-4">
+                        <label for="readonlyValor" style="font-weight:bold">Valor Imposto Total:</label>
+                        <label type="text" class="form-control" id="readonlyValor" readonly>{{ totalImpostos }} </label>
+                    </div>
+                    <div class="col-md-4 mb-4">
+                        <label for="readonlyValor" style="font-weight:bold">Valor Total Venda:</label>
+                        <label type="text" class="form-control" id="readonlyValor" readonly>{{ totalVendas }} </label>
+                    </div> 
+
+                </div>
+            </div>
+        
+            <div class="buttons-container" v-if="vendas.length !== 0">
+                <button class="button" @click="cancelarVenda">Cancelar Venda</button>
+                <button class="button" @click="finalizarVenda">Finalizar Venda</button>
+            </div>
         </div>
     </div>
 </template>
@@ -71,7 +93,9 @@ export default {
             quantidadeInformada: 0,
             valorItem: '',
             total: 0,
-            vendas: []
+            vendas: [],
+            totalVendas: 0,
+            totalImpostos: 0
         }        
     },
     mounted() {
@@ -91,13 +115,16 @@ export default {
         },
         quantidadeInformada: function() {
             this.calcularTotal();
+        },
+        vendas: function() {
+            console.log('zkldfkljskdj');
         }
     },
     methods: {
         calcularTotal() {
             const valorItem = Number(this.produtoSelecionado.preco_venda) * Number(this.quantidadeInformada);
             const imposto = (valorItem * this.produtoSelecionado.percentual_imposto) / 100;
-            const totalComImposto = valorItem + imposto;
+            const totalComImposto = valorItem + (imposto * this.quantidadeInformada);
 
             this.total = totalComImposto;
             this.valorItem = valorItem;
@@ -109,6 +136,13 @@ export default {
                 quantidade: this.quantidadeInformada,
                 total: this.total
             });
+
+
+
+            this.totalVendas = this.vendas.reduce((acc, venda) => acc + venda.total, 0);
+            console.log(this.vendas);
+            this.totalImpostos = this.vendas.reduce((acc, venda) => acc + ((Number(venda.produto.percentual_imposto) * Number(venda.quantidade) * Number(venda.produto.preco_venda))/100), 0);
+            // this.totalImpostos = this.vendas.reduce((acc, venda) => acc + (venda.total + Number(venda.produto.preco_venda) * Number(venda.quantidade)), 0);
         }
         
     }

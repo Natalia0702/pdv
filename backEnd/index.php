@@ -50,9 +50,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'PUT') {
     $produtoController = new ProdutoController($pdo);
     $parts = explode('/', $path);
     $id = end($parts);
-    if($path === '/atualizarProduto/'.$id) {        
+    
+    if($path === '/atualizarProduto/'.$id) {    
         $data = json_decode(file_get_contents("php://input"));
-        $produtoController->atualizarProduto($id, $data->nome, $data->preco_custo, $data->preco_venda);
+        $produtoController->atualizarProduto($id, $data->nome, $data->preco_custo, $data->preco_venda, $data->tipo_produto_id);
     }
 }
 

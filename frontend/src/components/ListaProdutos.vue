@@ -1,5 +1,11 @@
 <template> 
     <div class="container mt-4">
+      <div v-if="salvoComSucesso" class="alert alert-success" role="alert">
+        Produto salvo com sucesso!
+      </div>
+      <div v-if="deletadoComSucesso" class="alert alert-success" role="alert">
+        Produto deletado com sucesso!
+      </div>
         <table class="table">
           <thead>
             <tr>
@@ -41,7 +47,7 @@
                     <template v-else>
                         <button type="button" class="btn btn-success" @click="salvarProduto(produto)">Salvar</button>
                     </template>
-                    <button type="button" class="btn btn-danger" @click="deleteProduto(produto)">Deletar</button>
+                    <button type="button" class="btn btn-danger" @click="deletarProduto(produto.id_produto)">Deletar</button>
                 </div>
               </td>
             </tr>
@@ -56,26 +62,80 @@ import axios from 'axios';
 export default {
     // name: ListarProdutos,
     data() {
-        return {
-            produtos: []
-        }        
+      return {
+          produtos: [],
+          salvoComSucesso: false,
+          deletadoComSucesso: false
+      }        
     },
     mounted() {
+      this.carregarProdutos();
+    },
+    watch: {
+      salvoComSucesso: function(){
+        if(this.salvoComSucesso){
+          setTimeout(() => {
+            this.salvoComSucesso = false;
+          }, 3000);
+          this.carregarProdutos();
+        }
+      },
+      deletadoComSucesso: function(){
+        if(this.deletadoComSucesso){
+          setTimeout(() => {
+            this.deletadoComSucesso = false;
+          }, 3000);
+          this.carregarProdutos();
+        }
+      }
+    },
+    methods: {
+      async salvarProduto(produto){
+        try {
+          const id = produto.id_produto;
+          const response = await axios({  
+            method: 'put',
+            url: 'http://localhost:8080/atualizarProduto/' + id,
+            data: {  
+              id: produto.id_produto,   
+              nome: produto.nomeproduto,
+              preco_custo: produto.preco_custo,
+              preco_venda: produto.preco_venda,
+              tipo_produto_id: Number(produto.tipo_produto_id),
+            },
+            headers: {
+              'Content-Type': 'application/json'
+          }          
+        });
+          produto.editando = true; 
+          if(response.data){
+            this.salvoComSucesso = true;
+          }
+          produto.editando = false;
+          console.log(response.data);
+        } catch (error) {
+          console.error(error);
+        }
+      },
+      deletarProduto(id) {
+        axios.delete(`http://localhost:8080/deletarProduto/${id}`).then( () => {
+            console.log('excluido com sucesso');
+            this.deletadoComSucesso = true;
+            this.carregarProdutos();
+        }).catch(error => {
+            console.log("Erro ao excluir produto" + error);
+        })
+        this.deletadoComSucesso = false;
+      },
+      carregarProdutos(){
         axios.get('http://localhost:8080/listarProdutos').then(response => {
             console.log(response);
             this.produtos = response.data;
-            this.produto.editando = false;
+            this.produtos.editando = false;
         }).catch(error => {
             console.log("Erro ao carregar dados do produto" + error);
         })
-    },
-    methods: {
-        editProduto(){
-            console.log('editando');
-        },
-        salvarProduto(produto){
-            console.log(produto);
-        }
+      }
     }
 }
 </script>

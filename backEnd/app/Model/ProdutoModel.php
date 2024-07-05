@@ -16,7 +16,7 @@ class ProdutoModel
     public function buscar($id = null)
     {   
         if ($id === null) {
-            $stmt = $this->pdo->query('SELECT p.nome as nomeProduto, tp.nome as nomeTipoProduto, p.*, tp.* FROM produtos p join tipos_produtos tp on p.tipo_produto_id = tp.id');
+            $stmt = $this->pdo->query('SELECT p.nome as nomeProduto, tp.nome as nomeTipoProduto, p.id as id_produto, p.*, tp.* FROM produtos p join tipos_produtos tp on p.tipo_produto_id = tp.id');
             return $stmt->fetchAll(PDO::FETCH_ASSOC);
         } else {
             $stmt = $this->pdo->prepare('SELECT * FROM produtos WHERE id = :id');
@@ -26,15 +26,17 @@ class ProdutoModel
         }
     }
 
-    public function atualizarProduto(int $id, string $nome , float $preco_custo, float $preco_venda): bool
+    public function atualizarProduto(int $id, string $nome , float $preco_custo, float $preco_venda, int $tipo_produto_id): bool
     {   
-        $stmt = $this->pdo->prepare('UPDATE produtos SET nome = :nome, preco_custo= :preco_custo, preco_venda= :preco_venda WHERE id = :id');
-        $stmt->bindParam(':id', $id, PDO::PARAM_INT);
+        $stmt = $this->pdo->prepare('UPDATE produtos SET nome = :nome, preco_custo= :preco_custo, preco_venda= :preco_venda, tipo_produto_id= :tipo_produto_id WHERE id = :id');
         $stmt->bindParam(':nome', $nome, PDO::PARAM_STR);
         $stmt->bindParam(':preco_custo', $preco_custo, PDO::PARAM_INT);
         $stmt->bindParam(':preco_venda', $preco_venda, PDO::PARAM_INT);
+        $stmt->bindParam(':tipo_produto_id', $tipo_produto_id, PDO::PARAM_INT);
+        $stmt->bindParam(':id', $id, PDO::PARAM_INT);
         try{
             $stmt->execute();
+            echo 'Produto editado com sucesso!';
             return true;
         }catch(PDOException $e){
             echo "Erro ao executar UPDATE: ". $e->getMessage();

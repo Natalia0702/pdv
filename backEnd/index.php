@@ -17,7 +17,7 @@ $path = $_SERVER['REQUEST_URI'];
 if($path == '/listarProdutos') {
     $produtoController = new ProdutoController($pdo);
     header('Content-Type: application/json');
-    $resultado = $produtoController->listarProdutos($id);
+    $resultado = $produtoController->listarProdutos($id = null);
     echo json_encode($resultado);
 }
 

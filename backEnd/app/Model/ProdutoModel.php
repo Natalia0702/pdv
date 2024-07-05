@@ -16,7 +16,7 @@ class ProdutoModel
     public function buscar($id = null)
     {   
         if ($id === null) {
-            $stmt = $this->pdo->query('SELECT * FROM produtos');
+            $stmt = $this->pdo->query('SELECT p.nome as nomeProduto, tp.nome as nomeTipoProduto, p.*, tp.* FROM produtos p join tipos_produtos tp on p.tipo_produto_id = tp.id');
             return $stmt->fetchAll(PDO::FETCH_ASSOC);
         } else {
             $stmt = $this->pdo->prepare('SELECT * FROM produtos WHERE id = :id');
@@ -77,5 +77,10 @@ class ProdutoModel
     {
         $stmt = $this->pdo->query("SELECT p.*, tp.*, tp.nome as nomeTipoProduto, p.nome as nomeProduto FROM produtos p JOIN tipos_produtos tp ON p.tipo_produto_id = tp.id");
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    public function listarTiposDeProdutos(){
+        $stmt = $this->pdo->query("SELECT * FROM TIPOS_PRODUTOS");
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);            
     }
 }

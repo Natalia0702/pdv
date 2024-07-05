@@ -13,12 +13,6 @@ $dotenv->load();
 handleCors();
 
 $path = $_SERVER['REQUEST_URI'];
-// var_dump($path);
-// $routes = [
-//     '/' => 'index.php',
-//     '/listarProdutos' => 'index.php',
-//     '/contato' => 'app/Template/contato.html'
-// ];
 
 if($path == '/listarProdutos') {
     $produtoController = new ProdutoController($pdo);
@@ -42,10 +36,36 @@ if($path === '/salvarProduto') {
     echo 'Produto salvo com sucesso!';
 }
 
+if($_SERVER['REQUEST_METHOD'] === 'DELETE') {
+    $parts = explode('/', $path);
+    $id = end($parts);
+    if($path === '/deletarProduto/'.$id) {
+        $produtoController = new ProdutoController($pdo);
+        $produtoController->deletarProduto($id);
+        echo 'Excluido com sucesso';
+    }
+}
+
+if ($_SERVER['REQUEST_METHOD'] === 'PUT') {    
+    $produtoController = new ProdutoController($pdo);
+    $parts = explode('/', $path);
+    $id = end($parts);
+    if($path === '/atualizarProduto/'.$id) {        
+        $data = json_decode(file_get_contents("php://input"));
+        $produtoController->atualizarProduto($id, $data->nome, $data->preco_custo, $data->preco_venda);
+    }
+}
+
 if($path === '/listarProdutosTipoProduto') {
     $produtoController = new ProdutoController($pdo);
     header('Content-Type: application/json');
     $resultado = $produtoController->listarProdutosTipoProduto();
+    echo json_encode($resultado);
+}
+if($path == '/listarTiposDeProdutos') {
+    $produtoController = new ProdutoController($pdo);
+    header('Content-Type: application/json');
+    $resultado = $produtoController->listarTiposDeProdutos();
     echo json_encode($resultado);
 }
 

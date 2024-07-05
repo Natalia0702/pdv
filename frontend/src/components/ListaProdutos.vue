@@ -13,8 +13,8 @@
           <tbody>
             <tr v-for="produto in produtos" :key="produto.id">
                 <td>
-                    <span v-if="!produto.editando">{{ produto.nome }}</span>
-                    <input v-else v-model="produto.nome" />
+                    <span v-if="!produto.editando">{{ produto.nomeproduto }}</span>
+                    <input v-else v-model="produto.nomeproduto" />
                   </td>
                   <td>
                     <span v-if="!produto.editando">{{ produto.preco_custo }}</span>
@@ -25,7 +25,7 @@
                     <input v-else v-model="produto.preco_venda" />
                   </td>
                   <td>
-                    <span v-if="!produto.editando">{{ produto.tipo_produto_id }}</span>
+                    <span v-if="!produto.editando">{{ produto.nometipoproduto }}</span>
                     <select v-else v-model="produto.tipo_produto_id">
                         <option value="1">Fruta</option>
                         <option value="2">Legumes</option>

@@ -12,7 +12,6 @@ class ProdutoController
     public function listarProdutos($id)
     {
         $produtos = $this->produtoModel->buscar($id);
-        // var_dump($produtos);        
         return $produtos;
     }
 
@@ -36,5 +35,10 @@ class ProdutoController
     public function listarProdutosTipoProduto(){
         $resultado = $this->produtoModel->listarProdutosTipoProduto();
         return $resultado;
+    }
+
+    public function listarTiposDeProdutos() {
+        $resultado = $this->produtoModel->listarTiposDeProdutos();
+        return $resultado;        
     }
 }

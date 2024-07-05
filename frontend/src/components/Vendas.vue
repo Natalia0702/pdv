@@ -75,8 +75,8 @@
             </div>
         
             <div class="buttons-container" v-if="vendas.length !== 0">
-                <button class="button" @click="cancelarVenda()">Cancelar Venda</button>
-                <button class="button" @click="salvarVenda()">Finalizar Venda</button>
+                <button class="button btn btn-primary" style="margin-right:5px" type="button" @click="cancelarVenda()">Cancelar Venda</button>                
+                <button class="button btn btn-primary" @click="salvarVenda()">Finalizar Venda</button>
             </div>
         </div>
     </div>
